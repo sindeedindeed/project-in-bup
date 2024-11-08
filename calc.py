@@ -1,16 +1,11 @@
-def add(num1, num2):
-    return num1 + num2
+def mult(num1, num2):
+    return num1 * num2 
 
 def subtract(num1, num2):
     return num1 - num2
 
-def division(num1, num2):
-    return num1 / num2
-result = add(5, 3)
-print("Addition:", result)
+result = mult(5, 3)
+print("multiplication:", result)
 
 result = subtract(5, 3)
 print("Subtraction:", result)
-
-result = division(10, 5)
-print("Division", result)
