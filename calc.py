@@ -10,7 +10,9 @@ def multiplication(num1,num2):
 def division(num1,num2):
     print(num1/num2)       
 
-result = add(5, 3)
+x = input('Enter first operand: ')
+y = input('Enter second operand: ')
+result = add(x, y)
 print("Addition:", result)
 
 result = subtract(5, 3)
