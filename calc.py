@@ -8,21 +8,38 @@ def multiplication(num1, num2):
     return int(num1 * num2)
 
 def division(num1, num2):
-    return int(num1 / num2)
+    if num2 != 0:
+        return int(num1 / num2)
+    else:
+        return "Error."    
 
-x = int(input('Enter first operand: '))
-y = int(input('Enter second operand: '))
+print("Select operation: ")
+print("1.Addition")
+print("2.Substraction")
+print("3.Multiplication")
+print("4.Division")
 
-result = add(x, y)
-print("Addition:", result)
 
-result = subtract(x, y)
-print("Subtraction:", result)
+Instruction = input("Input your operation number:")
+x = float(input('Enter first operand: '))
+y = float(input('Enter second operand: '))
 
-result = multiplication(x, y)
-print("Multiplication:", result)
+if Instruction =='1':
+    result = add(x, y)
+    print("Addition:", result)
 
-result = division(x, y)
-print("Division:", result)
+elif Instruction == '2':
+    result = subtract(x, y)
+    print("Subtraction:", result)
 
+elif Instruction == '3':
+    result = multiplication(x, y)
+    print("Multiplication:", result)
+
+elif Instruction == '4':
+    result = division(x, y)
+    print("Division:", result)
+
+else:
+    print("Invalid Input.")    
 
