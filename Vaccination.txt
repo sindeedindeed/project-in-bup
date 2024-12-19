@@ -1,0 +1,43 @@
+CREATE TABLE Child (
+    child_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    dob DATE,
+    age INT,
+    address VARCHAR(255),
+    guardian_name VARCHAR(100),
+    contact_no VARCHAR(15)
+);
+
+CREATE TABLE Vaccine (
+    vaccine_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    dose INT
+);
+
+CREATE TABLE Vaccination_Centre (
+    centre_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    location VARCHAR(255)
+);
+
+CREATE TABLE Healthcare_Professional (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    role VARCHAR(50), -- Doctor or Nurse
+    years_of_experience INT,
+    qualification VARCHAR(100),
+    contact_info VARCHAR(15)
+);
+
+CREATE TABLE Vaccination_Record (
+    record_id INT PRIMARY KEY AUTO_INCREMENT,
+    child_id INT,
+    vaccine_id INT,
+    healthcare_professional_id INT,
+    centre_id INT,
+    date_administered DATE,
+    due_date DATE,
+    FOREIGN KEY (child_id) REFERENCES Child(child_id),
+    FOREIGN KEY (vaccine_id) REFERENCES Vaccine(vaccine_id),
+    FOREIGN KEY (healthcare_professional_id) REFERENCES Healthcare_Professional(id),
+    FOREIGN KEY (centre_id) REFERENCES Vaccination_Centre(centre_id)
+);
