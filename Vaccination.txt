@@ -8,7 +8,7 @@ use epi_vaccination;
 
 CREATE TABLE Child (
     child_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
+    child_name VARCHAR(100),
     dob DATE,
     age INT,
     address VARCHAR(255),
@@ -16,7 +16,7 @@ CREATE TABLE Child (
     contact_no VARCHAR(15)
 );
 
-INSERT INTO Child (child_id, name, dob, age, address, guardian_name, contact_no) VALUES
+INSERT INTO Child (child_id, child_name, dob, age, address, guardian_name, contact_no) VALUES
 (10001, 'Farhan Hasib', '2014-12-20', 10, 'Road-8, Block-C, Eskaton, Dhaka', 'Abdul Alim', '01910000001'),
 (10002, 'Ramim Ayon', '2014-12-19', 10, 'Road-2, Block-D, Uttara, Dhaka', 'Ruhul Amin', '01910000002');
 
@@ -56,7 +56,7 @@ INSERT INTO Healthcare_Professional (id, role, years_of_experience, qualificatio
 (800001, 'Nurse', 1, 'BSc Nursing', '01810000001');
 
 
-CREATE TABLE Vaccination_Record (
+CREATE TABLE Vaccination (
     record_id INT PRIMARY KEY AUTO_INCREMENT,
     child_id INT,
     vaccine_id INT,
@@ -70,7 +70,7 @@ CREATE TABLE Vaccination_Record (
     FOREIGN KEY (centre_id) REFERENCES Vaccination_Centre(centre_id)
 );
 
-INSERT INTO Vaccination_Record (record_id, child_id, vaccine_id, healthcare_professional_id, centre_id, date_administered, due_date) VALUES
+INSERT INTO Vaccination(record_id, child_id, vaccine_id, healthcare_professional_id, centre_id, date_administered, due_date) VALUES
 (1000001, 10001, 100000001, 700001, 1000001, '2024-12-20', '2024-12-31'),
 (1000002, 10002, 100000002, 800001, 1000002, '2024-12-19', '2024-12-30');
 
