@@ -83,64 +83,68 @@ File location: C Drive-->Xampp-->htdocs
 path: C:\xampp\htdocs
 ei pathe e giya ekta Text file khule code paste kor and Rename this file as 'epi_vaccination.php'
 
+<?php
+// Database credentials
+$host = 'localhost';
+$username = 'root'; // Default username for XAMPP
+$password = '';     // Default password for XAMPP
+$database = 'epi_vaccination'; // Replace with your database name
+
+// Connect to the database
+$conn = new mysqli($host, $username, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("<div class='alert alert-danger'>Connection failed: " . $conn->connect_error . "</div>");
+}
+
+// Handle form submission to insert data into the 'Child' table
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_child'])) {
+    // Collect form data
+    $child_name = $_POST['child_name'];
+    $dob = $_POST['dob'];
+    $address = $_POST['address'];
+    $guardian_name = $_POST['guardian_name'];
+    $contact_no = $_POST['contact_no'];
+
+   // Prepare the SQL statement without specifying the 'id' column
+    $stmt = $conn->prepare("
+    INSERT INTO Child (child_name, dob, address, guardian_name, contact_no) 
+    VALUES (?, ?, ?, ?, ?)
+    ");
+
+    // Bind parameters
+    $stmt->bind_param("sssss", $child_name, $dob, $address, $guardian_name, $contact_no);
+
+
+    // Execute and check for success
+    if ($stmt->execute()) {
+        echo "<div class='alert alert-success'>Child data added successfully!</div>";
+    } else {
+        echo "<div class='alert alert-danger'>Error: " . $stmt->error . "</div>";
+    }
+
+    // Close the statement
+    $stmt->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Table Viewer</title>
+    <title>Child Table Input and Table Viewer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">SQL Table Viewer</h1>
-
-        <?php
-        // Database credentials
-        $host = 'localhost';
-        $username = 'root'; // Default username for XAMPP
-        $password = '';     // Default password for XAMPP
-        $database = 'epi_vaccination'; // Replace with your database name
-
-        // Connect to the database
-        $conn = new mysqli($host, $username, $password, $database);
-
-        // Check connection
-        if ($conn->connect_error) {
-            die("<div class='alert alert-danger'>Connection failed: " . $conn->connect_error . "</div>");
-        }
-
-        // Handle form submission to insert data into the 'Child' table
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_child'])) {
-            $child_name = $_POST['child_name'];
-            $dob = $_POST['dob']; // Collect DOB
-            $child_age = $_POST['child_age'];
-            $address = $_POST['address'];
-            $guardian_name = $_POST['guardian_name'];
-            $contact_no = $_POST['contact_no'];
-
-            $stmt = $conn->prepare("INSERT INTO Child (child_name, dob, child_age, address, guardian_name, contact_no) 
-            VALUES (?, ?, TIMESTAMPDIFF(YEAR, ?, CURDATE()), ?, ?, ?)");
-            $stmt->bind_param("ssssss", $child_name, $dob, $dob, $address, $guardian_name, $contact_no);
-
-
-            if ($stmt->execute()) {
-                // Redirect after successful insertion
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit(); // Stop further script execution
-            } else {
-                echo "<div class='alert alert-danger'>Error: " . $stmt->error . "</div>";
-            }
-            
-            $stmt->close();
-        }
-        ?>
+        <h1 class="text-center">Add Child Information and View Tables</h1>
 
         <!-- Form to input data into the 'Child' table -->
         <div class="card mt-4">
             <div class="card-header">Add New Child</div>
             <div class="card-body">
-                <form method="POST">
+                <form method="POST" action="">
                     <div class="mb-3">
                         <label for="child_name" class="form-label">Child Name</label>
                         <input type="text" class="form-control" id="child_name" name="child_name" required>
@@ -166,17 +170,19 @@ ei pathe e giya ekta Text file khule code paste kor and Rename this file as 'epi
             </div>
         </div>
 
+        <!-- Display all tables -->
         <?php
-        // List of tables to show
+        // List of tables to display
         $tables = ['Child', 'healthcare_professional', 'vaccination_centre', 'vaccination', 'vaccine'];
 
-        // Loop through each table and fetch data
         foreach ($tables as $tableName) {
             echo "<h3 class='mt-4'>" . htmlspecialchars($tableName) . " Table</h3>";
 
             // Fetch data from the table
-            $dataResult = $conn->query("SELECT *, TIMESTAMPDIFF(YEAR, dob, CURDATE()) AS child_age FROM Child");
-
+            $query = $tableName === 'Child'
+                ? "SELECT id, child_name, dob, TIMESTAMPDIFF(YEAR, dob, CURDATE()) AS child_age, address, guardian_name, contact_no FROM $tableName"
+                : "SELECT * FROM $tableName";
+            $dataResult = $conn->query($query);
 
             if (!$dataResult) {
                 echo "<div class='alert alert-danger'>Error fetching data for table '$tableName': " . $conn->error . "</div>";
@@ -214,6 +220,7 @@ ei pathe e giya ekta Text file khule code paste kor and Rename this file as 'epi
     </div>
 </body>
 </html>
+
 
 
 
