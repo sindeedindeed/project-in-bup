@@ -94,6 +94,7 @@ ei pathe e giya ekta Text file khule code paste kor and Rename this file as 'epi
 <body>
     <div class="container mt-5">
         <h1 class="text-center">SQL Table Viewer</h1>
+
         <?php
         // Database credentials
         $host = 'localhost';
@@ -109,15 +110,73 @@ ei pathe e giya ekta Text file khule code paste kor and Rename this file as 'epi
             die("<div class='alert alert-danger'>Connection failed: " . $conn->connect_error . "</div>");
         }
 
+        // Handle form submission to insert data into the 'Child' table
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_child'])) {
+            $child_name = $_POST['child_name'];
+            $dob = $_POST['dob']; // Collect DOB
+            $child_age = $_POST['child_age'];
+            $address = $_POST['address'];
+            $guardian_name = $_POST['guardian_name'];
+            $contact_no = $_POST['contact_no'];
+
+            $stmt = $conn->prepare("INSERT INTO Child (child_name, dob, child_age, address, guardian_name, contact_no) 
+            VALUES (?, ?, TIMESTAMPDIFF(YEAR, ?, CURDATE()), ?, ?, ?)");
+            $stmt->bind_param("ssssss", $child_name, $dob, $dob, $address, $guardian_name, $contact_no);
+
+
+            if ($stmt->execute()) {
+                // Redirect after successful insertion
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit(); // Stop further script execution
+            } else {
+                echo "<div class='alert alert-danger'>Error: " . $stmt->error . "</div>";
+            }
+            
+            $stmt->close();
+        }
+        ?>
+
+        <!-- Form to input data into the 'Child' table -->
+        <div class="card mt-4">
+            <div class="card-header">Add New Child</div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="child_name" class="form-label">Child Name</label>
+                        <input type="text" class="form-control" id="child_name" name="child_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" name="dob" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="guardian_name" class="form-label">Guardian Name</label>
+                        <input type="text" class="form-control" id="guardian_name" name="guardian_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contact_no" class="form-label">Contact Number</label>
+                        <input type="text" class="form-control" id="contact_no" name="contact_no" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" name="add_child">Add Child</button>
+                </form>
+            </div>
+        </div>
+
+        <?php
         // List of tables to show
-        $tables = ['Child', 'healthcare_professional', 'vaccination_centre', 'vaccination_record', 'vaccine'];
+        $tables = ['Child', 'healthcare_professional', 'vaccination_centre', 'vaccination', 'vaccine'];
 
         // Loop through each table and fetch data
         foreach ($tables as $tableName) {
             echo "<h3 class='mt-4'>" . htmlspecialchars($tableName) . " Table</h3>";
 
             // Fetch data from the table
-            $dataResult = $conn->query("SELECT * FROM `$tableName`");
+            $dataResult = $conn->query("SELECT *, TIMESTAMPDIFF(YEAR, dob, CURDATE()) AS child_age FROM Child");
+
 
             if (!$dataResult) {
                 echo "<div class='alert alert-danger'>Error fetching data for table '$tableName': " . $conn->error . "</div>";
